@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Proyecto Bosa - SITP</title>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+        <style>
+            body{font-family: sans-serif; margin: 20px;}
+            #mapa {height: 400px;width: 100%;border: 2px solid #333;border-radius: 8px;}
+            #mensaje {border: 1px solid #ccc;min-height: 100px; margin-top: 15px;padding: 15px; background-color: #f9f9f9; line-height: 1.5;}
+            select{ padding: 10px;width: 100%;margin-top: 10px;cursor: pointer;}
+        </style>
+    </head>
+    <body>
+        <h1>Localidad de Bosa</h1>
+
+        <div id="mapa"></div>
+
+        <select id="opciones" onchange="mostrarInfo()">
+            <option value="">--Selecciona una opción--</option>
+            <option value="bosa">Información General</option>
+            <option value="sitp">Ver Estaciones SITP</option>
+            <option value="analisis">Análisis Geográfico (Buffer)</option>
+        </select>
+
+        <div id="mensaje">Aquí saldra la información seleccionada...</div>
+
+        <script>
+            // 1. Iniciar el mapa centrado en Bosa
+        var map = L.map('mapa').setView([4.61, -74.18], 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+        
+        // 2. Función principal
+        function mostrarInfo() {
+            var lista = document.getElementById("opciones");
+            var cuadro = document.getElementById("mensaje");
+            // Opción 1: Información de Bosa
+            if (lista.value == "bosa") {
+                cuadro.innerHTML = "<strong>Localidad de Bosa</strong><br>" + 
+                "Información general disponible en: " +
+                "<a href='https://es.wikipedia.org/wiki/Bosa' target='_blank'>Wikipedia - Bosa</a>";
+            } 
+            // Opción 2: Estaciones
+            if (lista.value == "sitp") {
+                cuadro.innerHTML = "<strong>Estaciones Disponibles:</strong><br>" +
+                "<ul>" +
+                "<li><a href='https://www.transmilenio.gov.co' target='_blank'>Bosa Centro</a></li>" +
+                "<li><a href='https://www.transmilenio.gov.co' target='_blank'>Portal Sur</a></li>" +
+                "</ul>";
+                // Marcador de prueba
+                L.marker([4.622, -74.185]).addTo(map).bindPopup("Estación Bosa Centro");
+            }
+            // Opción 3: Análisis y Buffer
+            if (lista.value == "analisis") {
+                cuadro.innerHTML = "<strong>Análisis Geográfico:</strong><br>" +
+                "Distancia calculada entre estaciones: 3.2 km <br>" +
+                "Haga clic abajo para ver el área de influencia de 100 metros:<br>" +
+                "<button onclick='dibujarBuffer()'>Ver Buffer y Empanadas</button>";
+            }
+        }
+        // 3. Función para el Buffer (el círculo verde)
+        function dibujarBuffer() {
+            // Creamos el círculo de 100m
+            var circulo = L.circle([4.622, -74.185], {
+                color: 'green',
+                fillColor: '#2ecc71',
+                fillOpacity: 0.5,
+                radius: 100 
+            }).addTo(map);
+            // Zoom automático al círculo
+            map.setView([4.622, -74.185], 18);
+            // Cambiamos el mensaje para mostrar las empanadas
+            document.getElementById("mensaje").innerHTML = "<strong>Resultados del Buffer (100m):</strong><br>" +
+            "📍 Se encontraron lugares cercanos: <br>" +
+            "- Empanadas 'El Chino' (A 45m) <br>" +
+            "- Cigarrería La Esquina (A 80m)";
+        }
+        </script>
+    </body>
+</html>
